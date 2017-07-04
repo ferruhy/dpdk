@@ -38,6 +38,13 @@
 #include <rte_pci.h>
 #include <rte_ethdev.h>
 
+#ifdef RTE_LIBRTE_CTRL_IF
+#include <rte_ctrl_if.h>
+#else
+#define rte_eth_control_interface_create(port_id) do { } while (0)
+#define rte_eth_control_interface_destroy(port_id) do { } while (0)
+#endif
+
 /**
  * Copy pci device info to the Ethernet device data.
  *
@@ -159,8 +166,12 @@ rte_eth_dev_pci_generic_probe(struct rte_pci_device *pci_dev,
 
 	RTE_FUNC_PTR_OR_ERR_RET(*dev_init, -EINVAL);
 	ret = dev_init(eth_dev);
-	if (ret)
+	if (ret) {
 		rte_eth_dev_pci_release(eth_dev);
+		return ret;
+	}
+
+	rte_eth_control_interface_create(eth_dev->data->port_id);
 
 	return ret;
 }
@@ -180,6 +191,8 @@ rte_eth_dev_pci_generic_remove(struct rte_pci_device *pci_dev,
 	eth_dev = rte_eth_dev_allocated(pci_dev->device.name);
 	if (!eth_dev)
 		return -ENODEV;
+
+	rte_eth_control_interface_destroy(eth_dev->data->port_id);
 
 	if (dev_uninit) {
 		ret = dev_uninit(eth_dev);

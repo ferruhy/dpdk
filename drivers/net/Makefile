@@ -39,6 +39,10 @@ endif
 core-libs := librte_eal librte_mbuf librte_mempool librte_ring librte_ether
 core-libs += librte_net librte_kvargs
 
+ifeq ($(CONFIG_RTE_LIBRTE_CTRL_IF),y)
+core-libs += librte_ctrl_if
+endif
+
 DIRS-$(CONFIG_RTE_LIBRTE_PMD_AF_PACKET) += af_packet
 DEPDIRS-af_packet = $(core-libs)
 DIRS-$(CONFIG_RTE_LIBRTE_ARK_PMD) += ark
