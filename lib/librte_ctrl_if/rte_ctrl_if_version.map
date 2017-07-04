@@ -1,4 +1,8 @@
 DPDK_17.11 {
+	global:
+
+	rte_eth_control_interface_create;
+	rte_eth_control_interface_destroy;
 
 	local: *;
 };

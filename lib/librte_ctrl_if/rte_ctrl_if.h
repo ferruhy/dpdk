@@ -51,6 +51,40 @@ extern "C" {
 
 #include <exec-env/unci.h>
 
+/**
+ * Creates control interfaces (Linux virtual network interface)for
+ * given ethdev port.
+ *
+ * This API opens device created by supportive kernel module and initializes
+ * kernel communication interface.
+ *
+ * With first interface created, a pthread created to receive the control
+ * messages.
+ *
+ * If supportive kernel module is not inserted this API will return
+ * an error.
+ *
+ * @param port_id
+ *  port id to create virtual interface
+ * @return
+ *  0 on success.
+ *  Negative value on error.
+ */
+int rte_eth_control_interface_create(uint8_t port_id);
+
+/**
+ * Destroys control interfaces.
+ *
+ * This API close device created by supportive kernel module and release
+ * underlying communication interface.
+ *
+ * @return
+ * @param port_id
+ *  port id to destroy virtual interface
+ *  0 on success.
+ *  Negative value on error.
+ */
+int rte_eth_control_interface_destroy(uint8_t port_id);
 
 #ifdef __cplusplus
 }
