@@ -38,12 +38,14 @@ LIB = librte_ctrl_if.a
 
 CFLAGS += -O3
 CFLAGS += $(WERROR_FLAGS)
+LDLIBS += -lpthread
 
 EXPORT_MAP := rte_ctrl_if_version.map
 
 LIBABIVER := 1
 
 SRCS-$(CONFIG_RTE_LIBRTE_CTRL_IF) := rte_ctrl_if.c
+SRCS-$(CONFIG_RTE_LIBRTE_CTRL_IF) += rte_nl.c
 
 #
 # Export include files

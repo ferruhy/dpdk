@@ -39,6 +39,7 @@
 
 #include <rte_log.h>
 #include "rte_ctrl_if.h"
+#include "rte_nl.h"
 
 #define NAMESZ 32
 #define IFNAME "dpdk"
@@ -90,6 +91,13 @@ control_interface_init(void)
 		return -1;
 	}
 
+	ret = control_interface_nl_init();
+	if (ret < 0) {
+		RTE_LOG(ERR, CTRL_IF, "Failed to initialize netlink\n");
+		close(unci_rtnl_fd);
+		unci_rtnl_fd = -1;
+	}
+
 	return ret;
 }
 
@@ -115,6 +123,8 @@ control_interface_release(void)
 {
 	close(unci_rtnl_fd);
 	unci_rtnl_fd = -1;
+
+	control_interface_nl_release();
 }
 
 static int
