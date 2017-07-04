@@ -57,6 +57,7 @@ Programmer's Guide
     ip_fragment_reassembly_lib
     generic_receive_offload_lib
     pdump_lib
+    ethtool_lib
     multi_proc_support
     kernel_nic_interface
     thread_safety_dpdk_functions

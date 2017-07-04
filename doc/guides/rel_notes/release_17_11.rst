@@ -41,6 +41,11 @@ New Features
      Also, make sure to start the actual text at the margin.
      =========================================================
 
+* **Added ethtool library.**
+
+  Ethtool library is wrapper for ethdev library and provides APIs to get data
+  similar to Linux ethtool provides.
+
 
 Resolved Issues
 ---------------
