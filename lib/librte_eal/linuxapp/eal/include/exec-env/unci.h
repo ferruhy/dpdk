@@ -60,6 +60,20 @@
 
 #define UNCI_DEVICE "unci"
 
+#define UNCI_GENL_MSG_LEN 1536
+
+#define UNCI_NL_MSG_LEN 500
+struct unci_nl_msg {
+	__u32 cmd_id;
+	__u32 port_id;
+	__u32 flag;
+	__u8 input_buffer[UNCI_NL_MSG_LEN];
+	__u8 output_buffer[UNCI_NL_MSG_LEN];
+	size_t input_buffer_len;
+	size_t output_buffer_len;
+	int err;
+};
+
 /* can go into include/uapi/linux/if_link.h */
 enum {
 	IFLA_UNCI_UNSPEC,
@@ -69,5 +83,24 @@ enum {
 };
 
 #define IFLA_UNCI_MAX (__IFLA_UNCI_MAX - 1)
+
+
+#define UNCI_GENL_VERSION 1
+
+enum {
+	UNCI_ATTR_UNSPEC,
+	UNCI_ATTR_MSG,
+	__UNCI_ATTR_MAX,
+};
+
+#define UNCI_ATTR_MAX (__UNCI_ATTR_MAX - 1)
+
+enum {
+	UNCI_CMD_UNSPEC,
+	UNCI_CMD_MSG,
+	__UNCI_CMD_MAX,
+};
+
+#define UNCI_CMD_MAX (__UNCI_CMD_MAX - 1)
 
 #endif /* _UAPI_LINUX_UNCI_H_ */

@@ -48,5 +48,6 @@ MODULE_CFLAGS += -Wall -Werror
 # all source are stored in SRCS-y
 #
 SRCS-$(CONFIG_RTE_UNCI_KMOD) := unci_net.c
+SRCS-$(CONFIG_RTE_UNCI_KMOD) += unci_nl.c
 
 include $(RTE_SDK)/mk/rte.module.mk

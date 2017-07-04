@@ -74,6 +74,12 @@ static struct rtnl_link_ops unci_link_ops __read_mostly = {
 
 static int __init unci_init(void)
 {
+	int ret;
+
+	ret = unci_nl_init();
+	if (ret)
+		return ret;
+
 	return rtnl_link_register(&unci_link_ops);
 }
 module_init(unci_init);
@@ -81,6 +87,7 @@ module_init(unci_init);
 static void __exit unci_exit(void)
 {
 	rtnl_link_unregister(&unci_link_ops);
+	unci_nl_release();
 }
 module_exit(unci_exit);
 

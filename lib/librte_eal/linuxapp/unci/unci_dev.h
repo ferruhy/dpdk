@@ -39,4 +39,7 @@ struct unci_dev {
 	__u32 pid;
 };
 
+int unci_nl_init(void);
+void unci_nl_release(void);
+
 #endif /* _UNCI_DEV_H_ */
