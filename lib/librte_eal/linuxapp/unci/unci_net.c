@@ -22,12 +22,142 @@
  *   Intel Corporation
  */
 
+#include <linux/etherdevice.h>
 #include <linux/module.h>
+#include <linux/version.h>
 #include <net/rtnetlink.h>
 
 #include "unci_dev.h"
 
-static const struct net_device_ops unci_net_netdev_ops = { 0 };
+static int unci_net_init(struct net_device *dev)
+{
+	u8 mac[ETH_ALEN] = {0};
+
+	unci_nl_exec(UNCI_REQ_GET_MAC, dev, NULL, 0, mac, ETH_ALEN);
+	memcpy(dev->dev_addr, mac, dev->addr_len);
+	return 0;
+}
+
+static int unci_net_open(struct net_device *dev)
+{
+	/* DPDK port already started, stop it first */
+	unci_nl_exec(UNCI_REQ_STOP_PORT, dev, NULL, 0, NULL, 0);
+	unci_nl_exec(UNCI_REQ_START_PORT, dev, NULL, 0, NULL, 0);
+	netif_start_queue(dev);
+	return 0;
+}
+
+static int unci_net_close(struct net_device *dev)
+{
+	unci_nl_exec(UNCI_REQ_STOP_PORT, dev, NULL, 0, NULL, 0);
+	netif_stop_queue(dev);
+	return 0;
+}
+
+static int unci_net_xmit(struct sk_buff *skb, struct net_device *dev)
+{
+	dev_kfree_skb(skb);
+	return NETDEV_TX_OK;
+}
+
+static void unci_net_change_rx_flags(struct net_device *dev, int flags)
+{
+	u32 on = 1;
+	u32 off = 0;
+
+	if (flags & IFF_PROMISC)
+		unci_nl_exec(UNCI_REQ_SET_PROMISC, dev,
+				dev->flags & IFF_PROMISC ?  &on : &off,
+				sizeof(u32), NULL, 0);
+
+	if (flags & IFF_ALLMULTI)
+		unci_nl_exec(UNCI_REQ_SET_ALLMULTI, dev,
+				dev->flags & IFF_ALLMULTI ?  &on : &off,
+				sizeof(u32), NULL, 0);
+}
+
+static int unci_net_set_mac(struct net_device *dev, void *p)
+{
+	struct sockaddr *addr = p;
+	int err;
+
+	if (!is_valid_ether_addr(addr->sa_data))
+		return -EADDRNOTAVAIL;
+
+	err = unci_nl_exec(UNCI_REQ_SET_MAC, dev, addr->sa_data,
+			dev->addr_len, NULL, 0);
+	if (err < 0)
+		return -EADDRNOTAVAIL;
+
+	memcpy(dev->dev_addr, addr->sa_data, dev->addr_len);
+
+	return 0;
+}
+
+static int unci_net_ioctl(struct net_device *dev, struct ifreq *rq, int cmd)
+{
+	return -EOPNOTSUPP;
+}
+
+/*
+ * Configuration changes (passed on by ifconfig)
+ */
+static int unci_net_config(struct net_device *dev, struct ifmap *map)
+{
+	if (dev->flags & IFF_UP)
+		return -EBUSY;
+
+	return -EOPNOTSUPP;
+}
+
+static int unci_net_change_mtu(struct net_device *dev, int new_mtu)
+{
+	int err = 0;
+
+	err = unci_nl_exec(UNCI_REQ_CHANGE_MTU, dev, &new_mtu, sizeof(int),
+			NULL, 0);
+
+	if (err == 0)
+		dev->mtu = new_mtu;
+
+	return err;
+}
+
+static void unci_net_stats64(struct net_device *dev,
+		struct rtnl_link_stats64 *stats)
+{
+	int err;
+
+	err = unci_nl_exec(UNCI_REQ_GET_STATS, dev, NULL, 0,
+			stats, sizeof(struct rtnl_link_stats64));
+}
+
+#if (KERNEL_VERSION(3, 9, 0) <= LINUX_VERSION_CODE)
+static int unci_net_change_carrier(struct net_device *dev, bool new_carrier)
+{
+	if (new_carrier)
+		netif_carrier_on(dev);
+	else
+		netif_carrier_off(dev);
+	return 0;
+}
+#endif
+
+static const struct net_device_ops unci_net_netdev_ops = {
+	.ndo_init = unci_net_init,
+	.ndo_open = unci_net_open,
+	.ndo_stop = unci_net_close,
+	.ndo_start_xmit = unci_net_xmit,
+	.ndo_change_rx_flags = unci_net_change_rx_flags,
+	.ndo_set_mac_address = unci_net_set_mac,
+	.ndo_do_ioctl = unci_net_ioctl,
+	.ndo_set_config = unci_net_config,
+	.ndo_change_mtu = unci_net_change_mtu,
+	.ndo_get_stats64 = unci_net_stats64,
+#if (KERNEL_VERSION(3, 9, 0) <= LINUX_VERSION_CODE)
+	.ndo_change_carrier = unci_net_change_carrier,
+#endif
+};
 
 static void unci_net_setup(struct net_device *dev)
 {
