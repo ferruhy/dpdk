@@ -142,6 +142,10 @@ process_msg(struct unci_nl_msg *msg)
 		msg->err = rte_eth_dev_control_process(msg->cmd_id,
 				msg->port_id, msg->input_buffer,
 				msg->output_buffer, &msg->output_buffer_len);
+	} else {
+		msg->err = rte_eth_dev_ethtool_process(msg->cmd_id,
+				msg->port_id, msg->input_buffer,
+				msg->output_buffer, &msg->output_buffer_len);
 	}
 
 	if (msg->err)

@@ -38,8 +38,12 @@
 extern "C" {
 #endif
 
+#include <linux/ethtool.h>
+
 #include <exec-env/unci.h>
 
+int rte_eth_dev_ethtool_process(uint32_t cmd_id, uint8_t port_id, void *in_data,
+		void *out_data, size_t *out_data_len);
 int rte_eth_dev_control_process(uint32_t cmd_id, uint8_t port_id, void *in_data,
 		void *out_data, size_t *out_data_len);
 
