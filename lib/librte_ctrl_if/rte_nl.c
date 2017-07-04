@@ -41,6 +41,7 @@
 
 #include <rte_log.h>
 #include <rte_lcore.h>
+#include "rte_ctrl_process.h"
 #include "rte_nl.h"
 #include "rte_ctrl_if.h"
 
@@ -60,6 +61,24 @@ struct ctrl_if_nl {
 	struct sockaddr_nl dest_addr;
 };
 
+struct ctrl_if_msg_sync {
+	struct unci_nl_msg msg_storage;
+	pthread_mutex_t msg_lock;
+	uint32_t pending_process;
+};
+
+
+/**
+ * Flags values for rte_eth_control_interface_process_msg() API
+ */
+enum control_interface_process_flag {
+	/**< Process if msg available. */
+	RTE_ETHTOOL_CTRL_IF_PROCESS_MSG,
+
+	/**< Discard msg if available, respond with a error value. */
+	RTE_ETHTOOL_CTRL_IF_DISCARD_MSG,
+};
+
 static int sock_fd = -1;
 static pthread_t thread_id;
 
@@ -67,6 +86,137 @@ static struct ctrl_if_nl nl_s;
 static struct ctrl_if_nl nl_r;
 
 static int nl_family_id;
+
+static struct ctrl_if_msg_sync ctrl_if_sync = {
+	.msg_lock = PTHREAD_MUTEX_INITIALIZER,
+};
+
+static int
+nl_send(void *buf, size_t len)
+{
+	struct nlattr *nl_na;
+	int ret;
+
+	nl_s.h.nlh.nlmsg_len = NLMSG_LENGTH(GENL_HDRLEN);
+	nl_s.h.nlh.nlmsg_type = nl_family_id;
+	nl_s.h.nlh.nlmsg_flags = NLM_F_REQUEST;
+	nl_s.h.nlh.nlmsg_seq = 0;
+	nl_s.h.nlh.nlmsg_pid = getpid();
+
+	nl_s.h.genlh.cmd = UNCI_CMD_MSG;
+	nl_s.h.genlh.version = UNCI_GENL_VERSION;
+	nl_s.h.genlh.reserved = 0;
+
+	nl_na = (struct nlattr *) GENLMSG_DATA(nl_s.nlmsg);
+	nl_na->nla_type = UNCI_ATTR_MSG;
+	nl_na->nla_len = len + NLA_HDRLEN;
+
+	nl_s.h.nlh.nlmsg_len += NLMSG_ALIGN(nl_na->nla_len);
+
+	if (nl_s.h.nlh.nlmsg_len > UNCI_GENL_MSG_LEN) {
+		RTE_LOG(ERR, CTRL_IF, "Message is too big, len:%zu\n", len);
+		return -1;
+	}
+
+	/* Fill in the netlink message payload */
+	memcpy(NLA_DATA(nl_na), buf, len);
+
+	ret = sendmsg(sock_fd, &nl_s.msg, 0);
+	if (ret < 0)
+		RTE_LOG(ERR, CTRL_IF, "Failed nl msg send. ret:%d, err:%d\n",
+				ret, errno);
+	return ret;
+}
+
+/* each request sent expects a reply */
+static int
+nl_reply(struct unci_nl_msg *msg)
+{
+	return nl_send((void *)msg, sizeof(struct unci_nl_msg));
+}
+
+static void
+process_msg(struct unci_nl_msg *msg)
+{
+	if (msg->cmd_id > UNCI_REQ_UNKNOWN) {
+		msg->err = rte_eth_dev_control_process(msg->cmd_id,
+				msg->port_id, msg->input_buffer,
+				msg->output_buffer, &msg->output_buffer_len);
+	}
+
+	if (msg->err)
+		memset(msg->output_buffer, 0, msg->output_buffer_len);
+
+	nl_reply(msg);
+}
+
+static int
+control_interface_msg_process(uint32_t flag)
+{
+	struct unci_nl_msg msg_storage;
+	int ret = 0;
+
+	pthread_mutex_lock(&ctrl_if_sync.msg_lock);
+	if (ctrl_if_sync.pending_process == 0) {
+		pthread_mutex_unlock(&ctrl_if_sync.msg_lock);
+		return 0;
+	}
+
+	memcpy(&msg_storage, &ctrl_if_sync.msg_storage,
+			sizeof(struct unci_nl_msg));
+	ctrl_if_sync.pending_process = 0;
+	pthread_mutex_unlock(&ctrl_if_sync.msg_lock);
+
+	switch (flag) {
+	case RTE_ETHTOOL_CTRL_IF_PROCESS_MSG:
+		process_msg(&msg_storage);
+		break;
+
+	case RTE_ETHTOOL_CTRL_IF_DISCARD_MSG:
+		msg_storage.err = -1;
+		nl_reply(&msg_storage);
+		break;
+
+	default:
+		ret = -1;
+		break;
+	}
+
+	return ret;
+}
+
+static int
+msg_add_and_process(struct nlmsghdr *nlh)
+{
+	struct nlattr *nl_na;
+	char *genlh;
+
+	pthread_mutex_lock(&ctrl_if_sync.msg_lock);
+
+	if (ctrl_if_sync.pending_process) {
+		pthread_mutex_unlock(&ctrl_if_sync.msg_lock);
+		return -1;
+	}
+
+	genlh = NLMSG_DATA(nlh);
+	nl_na = (struct nlattr *) (genlh + GENL_HDRLEN);
+
+	if (nl_na->nla_type != UNCI_ATTR_MSG) {
+		pthread_mutex_unlock(&ctrl_if_sync.msg_lock);
+		return -1;
+	}
+
+	memcpy(&ctrl_if_sync.msg_storage, NLA_DATA(nl_na),
+			sizeof(struct unci_nl_msg));
+	ctrl_if_sync.msg_storage.flag = UNCI_MSG_FLAG_RESPONSE;
+	ctrl_if_sync.pending_process = 1;
+
+	pthread_mutex_unlock(&ctrl_if_sync.msg_lock);
+
+	control_interface_msg_process(RTE_ETHTOOL_CTRL_IF_PROCESS_MSG);
+
+	return 0;
+}
 
 static void *
 nl_recv(void *arg)
@@ -87,6 +237,8 @@ nl_recv(void *arg)
 					ret, sizeof(struct unci_nl_msg));
 			continue;
 		}
+
+		msg_add_and_process(&nl_r.h.nlh);
 	}
 
 	return arg;

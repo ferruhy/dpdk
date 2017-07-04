@@ -46,6 +46,7 @@ LIBABIVER := 1
 
 SRCS-$(CONFIG_RTE_LIBRTE_CTRL_IF) := rte_ctrl_if.c
 SRCS-$(CONFIG_RTE_LIBRTE_CTRL_IF) += rte_nl.c
+SRCS-$(CONFIG_RTE_LIBRTE_CTRL_IF) += rte_ctrl_process.c
 
 #
 # Export include files
