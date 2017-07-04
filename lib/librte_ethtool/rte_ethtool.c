@@ -37,9 +37,6 @@
 #include <rte_ethdev.h>
 #include <rte_ether.h>
 #include <rte_pci.h>
-#ifdef RTE_LIBRTE_IXGBE_PMD
-#include <rte_pmd_ixgbe.h>
-#endif
 #include "rte_ethtool.h"
 
 #define PKTPOOL_SIZE 512
@@ -363,26 +360,8 @@ rte_ethtool_net_vlan_rx_kill_vid(uint8_t port_id, uint16_t vid)
 int
 rte_ethtool_net_set_rx_mode(uint8_t port_id)
 {
-	uint16_t num_vfs;
-	struct rte_eth_dev_info dev_info;
-	uint16_t vf;
-
-	memset(&dev_info, 0, sizeof(dev_info));
-	rte_eth_dev_info_get(port_id, &dev_info);
-	num_vfs = dev_info.max_vfs;
-
-	/* Set VF vf_rx_mode, VF unsupport status is discard */
-	for (vf = 0; vf < num_vfs; vf++) {
-#ifdef RTE_LIBRTE_IXGBE_PMD
-		rte_pmd_ixgbe_set_vf_rxmode(port_id, vf,
-			ETH_VMDQ_ACCEPT_UNTAG, 0);
-#endif
-	}
-
 	/* Enable Rx vlan filter, VF unspport status is discard */
-	rte_eth_dev_set_vlan_offload(port_id, ETH_VLAN_FILTER_MASK);
-
-	return 0;
+	return rte_eth_dev_set_vlan_offload(port_id, ETH_VLAN_FILTER_MASK);
 }
 
 
