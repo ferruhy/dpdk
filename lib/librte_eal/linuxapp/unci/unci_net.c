@@ -31,8 +31,13 @@ static const struct net_device_ops unci_net_netdev_ops = { 0 };
 
 static void unci_net_setup(struct net_device *dev)
 {
+	struct unci_dev *unci;
+
 	ether_setup(dev);
 	dev->netdev_ops = &unci_net_netdev_ops;
+
+	unci = netdev_priv(dev);
+	init_completion(&unci->msg_received);
 }
 
 static int unci_net_newlink(struct net *net, struct net_device *dev,

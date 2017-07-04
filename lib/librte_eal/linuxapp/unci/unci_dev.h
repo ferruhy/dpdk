@@ -37,9 +37,13 @@
 struct unci_dev {
 	__u32 port_id;
 	__u32 pid;
+	struct completion msg_received;
+	u32 nb_timedout_msg;
 };
 
 int unci_nl_init(void);
 void unci_nl_release(void);
+int unci_nl_exec(u32 cmd, struct net_device *dev, void *in_data,
+		size_t in_len, void *out_data, size_t out_len);
 
 #endif /* _UNCI_DEV_H_ */

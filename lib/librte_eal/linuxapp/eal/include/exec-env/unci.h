@@ -74,6 +74,12 @@ struct unci_nl_msg {
 	int err;
 };
 
+enum unci_ethtool_msg_flag {
+	UNCI_MSG_FLAG_NONE,
+	UNCI_MSG_FLAG_REQUEST,
+	UNCI_MSG_FLAG_RESPONSE,
+};
+
 /* can go into include/uapi/linux/if_link.h */
 enum {
 	IFLA_UNCI_UNSPEC,
