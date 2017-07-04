@@ -1,4 +1,28 @@
 DPDK_17.11 {
+	global:
+
+	rte_ethtool_get_drvinfo;
+	rte_ethtool_get_link;
+	rte_ethtool_get_regs_len;
+	rte_ethtool_get_regs;
+	rte_ethtool_get_eeprom_len;
+	rte_ethtool_get_eeprom;
+	rte_ethtool_set_eeprom;
+	rte_ethtool_get_pauseparam;
+	rte_ethtool_set_pauseparam;
+	rte_ethtool_get_ringparam;
+	rte_ethtool_set_ringparam;
+
+	rte_ethtool_net_open;
+	rte_ethtool_net_stop;
+	rte_ethtool_net_get_mac_addr;
+	rte_ethtool_net_set_mac_addr;
+	rte_ethtool_net_validate_addr;
+	rte_ethtool_net_change_mtu;
+	rte_ethtool_net_get_stats64;
+	rte_ethtool_net_vlan_rx_add_vid;
+	rte_ethtool_net_vlan_rx_kill_vid;
+	rte_ethtool_net_set_rx_mode;
 
 	local: *;
 };
