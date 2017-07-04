@@ -793,6 +793,9 @@ Latency statistics
 M: Reshma Pattan <reshma.pattan@intel.com>
 F: lib/librte_latencystats/
 
+Ethtool
+M: Remy Horton <remy.horton@intel.com>
+F: lib/librte_ethtool/
 
 Test Applications
 -----------------

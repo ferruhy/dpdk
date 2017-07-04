@@ -279,6 +279,7 @@ static const struct logtype logtype_strings[] = {
 	{RTE_LOGTYPE_CRYPTODEV,  "cryptodev"},
 	{RTE_LOGTYPE_EFD,        "efd"},
 	{RTE_LOGTYPE_EVENTDEV,   "eventdev"},
+	{RTE_LOGTYPE_ETHTOOL,    "ethtool"},
 	{RTE_LOGTYPE_USER1,      "user1"},
 	{RTE_LOGTYPE_USER2,      "user2"},
 	{RTE_LOGTYPE_USER3,      "user3"},
