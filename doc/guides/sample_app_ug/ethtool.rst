@@ -1,6 +1,6 @@
 
 ..  BSD LICENSE
-    Copyright(c) 2015 Intel Corporation. All rights reserved.
+    Copyright(c) 2015-2017 Intel Corporation. All rights reserved.
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -71,7 +71,7 @@ The only available options are the standard ones for the EAL:
 
 .. code-block:: console
 
-    ./ethtool-app/ethtool-app/${RTE_TARGET}/ethtool [EAL options]
+    ./${RTE_TARGET}/ethtool [EAL options]
 
 Refer to the *DPDK Getting Started Guide* for general information on
 running applications and the Environment Abstraction Layer (EAL)
@@ -128,33 +128,5 @@ Ethtool Shell
 The foreground part of the Ethtool sample is a console-based
 interface that accepts commands as described in `using the
 application`_. Individual call-back functions handle the detail
-associated with each command, which make use of the functions
-defined in the `Ethtool interface`_ to the DPDK functions.
-
-Ethtool interface
------------------
-
-The Ethtool interface is built as a separate library, and implements
-the following functions:
-
-- ``rte_ethtool_get_drvinfo()``
-- ``rte_ethtool_get_regs_len()``
-- ``rte_ethtool_get_regs()``
-- ``rte_ethtool_get_link()``
-- ``rte_ethtool_get_eeprom_len()``
-- ``rte_ethtool_get_eeprom()``
-- ``rte_ethtool_set_eeprom()``
-- ``rte_ethtool_get_pauseparam()``
-- ``rte_ethtool_set_pauseparam()``
-- ``rte_ethtool_net_open()``
-- ``rte_ethtool_net_stop()``
-- ``rte_ethtool_net_get_mac_addr()``
-- ``rte_ethtool_net_set_mac_addr()``
-- ``rte_ethtool_net_validate_addr()``
-- ``rte_ethtool_net_change_mtu()``
-- ``rte_ethtool_net_get_stats64()``
-- ``rte_ethtool_net_vlan_rx_add_vid()``
-- ``rte_ethtool_net_vlan_rx_kill_vid()``
-- ``rte_ethtool_net_set_rx_mode()``
-- ``rte_ethtool_get_ringparam()``
-- ``rte_ethtool_set_ringparam()``
+associated with each command, which make use of librte_ethtool
+library.
