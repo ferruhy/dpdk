@@ -131,6 +131,7 @@ CFLAGS_eal_thread.o += -Wno-return-type
 endif
 
 INC := rte_interrupts.h rte_kni_common.h rte_dom0_common.h
+INC += unci.h
 
 SYMLINK-$(CONFIG_RTE_EXEC_ENV_LINUXAPP)-include/exec-env := \
 	$(addprefix include/exec-env/,$(INC))

@@ -25,10 +25,18 @@
 #ifndef _UNCI_DEV_H_
 #define _UNCI_DEV_H_
 
+#include <linux/netdevice.h>
+
+#include <exec-env/unci.h>
+
 #ifdef pr_fmt
 #undef pr_fmt
 #endif
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+struct unci_dev {
+	__u32 port_id;
+	__u32 pid;
+};
 
 #endif /* _UNCI_DEV_H_ */
