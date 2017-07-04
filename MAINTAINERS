@@ -797,6 +797,10 @@ Ethtool
 M: Remy Horton <remy.horton@intel.com>
 F: lib/librte_ethtool/
 
+Linux Userspace Network Control Interface (UNCI)
+M: Ferruh Yigit <ferruh.yigit@intel.com>
+F: lib/librte_eal/linuxapp/unci/
+
 Test Applications
 -----------------
 

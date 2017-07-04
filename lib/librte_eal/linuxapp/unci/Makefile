@@ -1,6 +1,6 @@
 #   BSD LICENSE
 #
-#   Copyright(c) 2010-2017 Intel Corporation. All rights reserved.
+#   Copyright(c) 2017 Intel Corporation. All rights reserved.
 #   All rights reserved.
 #
 #   Redistribution and use in source and binary forms, with or without
@@ -31,13 +31,22 @@
 
 include $(RTE_SDK)/mk/rte.vars.mk
 
-DIRS-$(CONFIG_RTE_EXEC_ENV_LINUXAPP) += eal
-DIRS-$(CONFIG_RTE_EAL_IGB_UIO) += igb_uio
-DIRS-$(CONFIG_RTE_KNI_KMOD) += kni
-DEPDIRS-kni := eal
-DIRS-$(CONFIG_RTE_UNCI_KMOD) += unci
-DEPDIRS-unci := eal
-DIRS-$(CONFIG_RTE_LIBRTE_XEN_DOM0) += xen_dom0
-DEPDIRS-xen_dom0 := eal
+#
+# module name and path
+#
+MODULE = rte_unci
 
-include $(RTE_SDK)/mk/rte.subdir.mk
+#
+# CFLAGS
+#
+MODULE_CFLAGS += -I$(SRCDIR)
+MODULE_CFLAGS += -I$(RTE_OUTPUT)/include
+MODULE_CFLAGS += -include $(RTE_OUTPUT)/include/rte_config.h
+MODULE_CFLAGS += -Wall -Werror
+
+#
+# all source are stored in SRCS-y
+#
+SRCS-$(CONFIG_RTE_UNCI_KMOD) := unci_net.c
+
+include $(RTE_SDK)/mk/rte.module.mk
