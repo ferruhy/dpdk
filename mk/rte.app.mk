@@ -92,6 +92,7 @@ _LDLIBS-$(CONFIG_RTE_LIBRTE_MBUF)           += -lrte_mbuf
 _LDLIBS-$(CONFIG_RTE_LIBRTE_NET)            += -lrte_net
 _LDLIBS-$(CONFIG_RTE_LIBRTE_ETHER)          += -lrte_ethdev
 _LDLIBS-$(CONFIG_RTE_LIBRTE_ETHTOOL)        += -lrte_ethtool
+_LDLIBS-$(CONFIG_RTE_LIBRTE_CTRL_IF)        += -lrte_ctrl_if
 _LDLIBS-$(CONFIG_RTE_LIBRTE_CRYPTODEV)      += -lrte_cryptodev
 _LDLIBS-$(CONFIG_RTE_LIBRTE_EVENTDEV)       += -lrte_eventdev
 _LDLIBS-$(CONFIG_RTE_LIBRTE_MEMPOOL)        += -lrte_mempool

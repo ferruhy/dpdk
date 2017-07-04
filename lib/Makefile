@@ -110,6 +110,8 @@ DIRS-$(CONFIG_RTE_LIBRTE_PDUMP) += librte_pdump
 DEPDIRS-librte_pdump := librte_eal librte_mempool librte_mbuf librte_ether
 DIRS-$(CONFIG_RTE_LIBRTE_ETHTOOL) += librte_ethtool
 DEPDIRS-librte_ethtool := librte_eal librte_ether
+DIRS-$(CONFIG_RTE_LIBRTE_CTRL_IF) += librte_ctrl_if
+DEPDIRS-librte_ctrl_if := librte_eal librte_ether librte_ethtool
 
 ifeq ($(CONFIG_RTE_EXEC_ENV_LINUXAPP),y)
 DIRS-$(CONFIG_RTE_LIBRTE_KNI) += librte_kni

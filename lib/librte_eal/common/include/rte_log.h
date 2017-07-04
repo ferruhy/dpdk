@@ -88,6 +88,7 @@ extern struct rte_logs rte_logs;
 #define RTE_LOGTYPE_EFD       18 /**< Log related to EFD. */
 #define RTE_LOGTYPE_EVENTDEV  19 /**< Log related to eventdev. */
 #define RTE_LOGTYPE_ETHTOOL   20 /**< Log related to ethtool. */
+#define RTE_LOGTYPE_CTRL_IF   21 /**< Log related to control interface. */
 
 /* these log types can be used in an application */
 #define RTE_LOGTYPE_USER1     24 /**< User-defined log type 1. */

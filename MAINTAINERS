@@ -800,6 +800,7 @@ F: lib/librte_ethtool/
 Linux Userspace Network Control Interface (UNCI)
 M: Ferruh Yigit <ferruh.yigit@intel.com>
 F: lib/librte_eal/linuxapp/unci/
+F: lib/librte_ctrl_if/
 
 Test Applications
 -----------------

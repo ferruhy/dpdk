@@ -721,6 +721,11 @@ CONFIG_RTE_LIBRTE_ETHTOOL=n
 CONFIG_RTE_UNCI_KMOD=n
 
 #
+# Compile librte_ctrl_if
+#
+CONFIG_RTE_LIBRTE_CTRL_IF=n
+
+#
 # Compile vhost user library
 #
 CONFIG_RTE_LIBRTE_VHOST=n

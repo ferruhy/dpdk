@@ -1,6 +1,6 @@
 #   BSD LICENSE
 #
-#   Copyright(c) 2010-2016 Intel Corporation. All rights reserved.
+#   Copyright(c) 2017 Intel Corporation. All rights reserved.
 #   All rights reserved.
 #
 #   Redistribution and use in source and binary forms, with or without
@@ -28,28 +28,26 @@
 #   THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 #   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+include $(RTE_SDK)/mk/rte.vars.mk
+
 #
+# library name
+#
+LIB = librte_ctrl_if.a
 
-#include "common_base"
+CFLAGS += -O3
+CFLAGS += $(WERROR_FLAGS)
 
-CONFIG_RTE_EXEC_ENV="linuxapp"
-CONFIG_RTE_EXEC_ENV_LINUXAPP=y
+EXPORT_MAP := rte_ctrl_if_version.map
 
-CONFIG_RTE_EAL_NUMA_AWARE_HUGEPAGES=y
-CONFIG_RTE_EAL_IGB_UIO=y
-CONFIG_RTE_EAL_VFIO=y
-CONFIG_RTE_KNI_KMOD=y
-CONFIG_RTE_LIBRTE_KNI=y
-CONFIG_RTE_LIBRTE_PMD_KNI=y
-CONFIG_RTE_LIBRTE_ETHTOOL=y
-CONFIG_RTE_UNCI_KMOD=y
-CONFIG_RTE_LIBRTE_CTRL_IF=y
-CONFIG_RTE_LIBRTE_VHOST=y
-CONFIG_RTE_LIBRTE_VHOST_NUMA=y
-CONFIG_RTE_LIBRTE_PMD_VHOST=y
-CONFIG_RTE_LIBRTE_PMD_AF_PACKET=y
-CONFIG_RTE_LIBRTE_PMD_TAP=y
-CONFIG_RTE_LIBRTE_AVP_PMD=y
-CONFIG_RTE_LIBRTE_NFP_PMD=y
-CONFIG_RTE_LIBRTE_POWER=y
-CONFIG_RTE_VIRTIO_USER=y
+LIBABIVER := 1
+
+SRCS-$(CONFIG_RTE_LIBRTE_CTRL_IF) := rte_ctrl_if.c
+
+#
+# Export include files
+#
+SYMLINK-$(CONFIG_RTE_LIBRTE_CTRL_IF)-include += rte_ctrl_if.h
+
+include $(RTE_SDK)/mk/rte.lib.mk

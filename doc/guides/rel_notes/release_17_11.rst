@@ -174,6 +174,7 @@ The libraries prepended with a plus sign were incremented in this version.
      librte_cfgfile.so.2
      librte_cmdline.so.2
      librte_cryptodev.so.3
+   + librte_ctrl_if.so.1
      librte_distributor.so.1
      librte_eal.so.5
      librte_ethdev.so.7
