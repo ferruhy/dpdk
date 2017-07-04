@@ -49,5 +49,6 @@ MODULE_CFLAGS += -Wall -Werror
 #
 SRCS-$(CONFIG_RTE_UNCI_KMOD) := unci_net.c
 SRCS-$(CONFIG_RTE_UNCI_KMOD) += unci_nl.c
+SRCS-$(CONFIG_RTE_UNCI_KMOD) += unci_ethtool.c
 
 include $(RTE_SDK)/mk/rte.module.mk

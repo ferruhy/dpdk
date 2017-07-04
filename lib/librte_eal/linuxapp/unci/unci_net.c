@@ -168,6 +168,8 @@ static void unci_net_setup(struct net_device *dev)
 
 	unci = netdev_priv(dev);
 	init_completion(&unci->msg_received);
+
+	unci_set_ethtool_ops(dev);
 }
 
 static int unci_net_newlink(struct net *net, struct net_device *dev,

@@ -46,4 +46,6 @@ void unci_nl_release(void);
 int unci_nl_exec(u32 cmd, struct net_device *dev, void *in_data,
 		size_t in_len, void *out_data, size_t out_len);
 
+void unci_set_ethtool_ops(struct net_device *netdev);
+
 #endif /* _UNCI_DEV_H_ */
