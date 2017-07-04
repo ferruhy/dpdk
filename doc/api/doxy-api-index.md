@@ -165,4 +165,5 @@ The public API headers are grouped by topics:
   [common]             (@ref rte_common.h),
   [ABI compat]         (@ref rte_compat.h),
   [version]            (@ref rte_version.h),
-  [ethtool]            (@ref rte_ethtool.h)
+  [ethtool]            (@ref rte_ethtool.h),
+  [control interface]  (@ref rte_ctrl_if.h)

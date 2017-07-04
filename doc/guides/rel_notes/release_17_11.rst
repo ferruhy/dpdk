@@ -46,6 +46,14 @@ New Features
   Ethtool library is wrapper for ethdev library and provides APIs to get data
   similar to Linux ethtool provides.
 
+* **Control interface support added.**
+
+  To enable controlling DPDK ports by common Linux tools.
+  Following modules added to DPDK:
+
+  * librte_ctrl_if library
+  * librte_eal/linuxapp/unci kernel module
+
 
 Resolved Issues
 ---------------

@@ -58,6 +58,7 @@ Programmer's Guide
     generic_receive_offload_lib
     pdump_lib
     ethtool_lib
+    ctrl_if_lib
     multi_proc_support
     kernel_nic_interface
     thread_safety_dpdk_functions
