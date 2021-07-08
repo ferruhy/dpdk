@@ -78,6 +78,11 @@ New Features
   * Added net/cnxk driver which provides the support for the integrated ethernet
     device.
 
+* **Added Wangxun ngbe PMD.**
+
+  Added a new PMD driver for Wangxun 1 Gigabit Ethernet NICs.
+  See the :doc:`../nics/ngbe` for more details.
+
 * **Added Baseband PHY CNXK PMD.**
 
   Added Baseband PHY PMD which allows to configure BPHY hardware block
