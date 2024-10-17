@@ -462,7 +462,7 @@ nfp_net_flow_item_check(const struct rte_flow_item *item,
 	/* item->last and item->mask cannot exist without item->spec. */
 	if (item->spec == NULL) {
 		if (item->mask || item->last) {
-			PMD_DRV_LOG(ERR, "'mask' or 'last' field provided"
+			PMD_DRV_LOG(ERR, "The 'mask' or 'last' field provided"
 					" without a corresponding 'spec'.");
 			return -EINVAL;
 		}
@@ -1122,7 +1122,7 @@ nfp_net_flow_priv_init(struct nfp_pf_dev *pf_dev,
 	flow_hash_params.entries = priv->flow_limit * NFP_NET_HASH_REDUNDANCE;
 	priv->flow_table = rte_hash_create(&flow_hash_params);
 	if (priv->flow_table == NULL) {
-		PMD_INIT_LOG(ERR, "flow hash table creation failed");
+		PMD_INIT_LOG(ERR, "Flow hash table creation failed");
 		ret = -ENOMEM;
 		goto free_flow_position;
 	}
