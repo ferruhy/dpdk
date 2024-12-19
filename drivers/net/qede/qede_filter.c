@@ -10,6 +10,13 @@
 #include <rte_errno.h>
 #include <rte_flow_driver.h>
 
+#ifndef SLIST_FOREACH_SAFE
+#define	SLIST_FOREACH_SAFE(var, head, field, tvar)			\
+	for ((var) = SLIST_FIRST((head));				\
+	    (var) && ((tvar) = SLIST_NEXT((var), field), 1);		\
+	    (var) = (tvar))
+#endif
+
 #include "qede_ethdev.h"
 
 /* VXLAN tunnel classification mapping */
@@ -154,15 +161,12 @@ int qede_check_fdir_support(struct rte_eth_dev *eth_dev)
 void qede_fdir_dealloc_resc(struct rte_eth_dev *eth_dev)
 {
 	struct qede_dev *qdev = QEDE_INIT_QDEV(eth_dev);
-	struct qede_arfs_entry *tmp = NULL;
+	struct qede_arfs_entry *tmp, *tmp2;
 
-	SLIST_FOREACH(tmp, &qdev->arfs_info.arfs_list_head, list) {
-		if (tmp) {
-			rte_memzone_free(tmp->mz);
-			SLIST_REMOVE(&qdev->arfs_info.arfs_list_head, tmp,
-				     qede_arfs_entry, list);
-			rte_free(tmp);
-		}
+	SLIST_FOREACH_SAFE(tmp, &qdev->arfs_info.arfs_list_head, list, tmp2) {
+		rte_memzone_free(tmp->mz);
+		SLIST_REMOVE(&qdev->arfs_info.arfs_list_head, tmp, qede_arfs_entry, list);
+		rte_free(tmp);
 	}
 }
 
