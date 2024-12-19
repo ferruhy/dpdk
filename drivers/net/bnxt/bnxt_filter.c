@@ -12,6 +12,13 @@
 #include <rte_flow_driver.h>
 #include <rte_tailq.h>
 
+#ifndef STAILQ_FOREACH_SAFE
+#define	STAILQ_FOREACH_SAFE(var, head, field, tvar)			\
+	for ((var) = STAILQ_FIRST((head));				\
+	    (var) && ((tvar) = STAILQ_NEXT((var), field), 1);		\
+	    (var) = (tvar))
+#endif
+
 #include "bnxt.h"
 #include "bnxt_filter.h"
 #include "bnxt_hwrm.h"
@@ -151,7 +158,9 @@ void bnxt_free_filter_mem(struct bnxt *bp)
 	bp->filter_info = NULL;
 
 	for (i = 0; i < bp->pf->max_vfs; i++) {
-		STAILQ_FOREACH(filter, &bp->pf->vf_info[i].filter, next) {
+		struct bnxt_filter_info *tmp;
+
+		STAILQ_FOREACH_SAFE(filter, &bp->pf->vf_info[i].filter, next, tmp) {
 			rte_free(filter);
 			STAILQ_REMOVE(&bp->pf->vf_info[i].filter, filter,
 				      bnxt_filter_info, next);
