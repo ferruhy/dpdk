@@ -63,6 +63,10 @@ New Features
   and even substantial part of its code.
   It can be viewed as an extension of rte_ring functionality.
 
+* **Added Yunsilicon xsc net driver [EXPERIMENTAL].**
+
+  * Added the PMD for Yunsilicon metaScale serials NICs.
+
 
 Removed Items
 -------------
